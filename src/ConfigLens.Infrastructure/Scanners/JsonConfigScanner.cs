@@ -11,10 +11,6 @@ namespace ConfigLens.Infrastructure.Scanners;
 /// </summary>
 public sealed partial class JsonConfigScanner : IScanner
 {
-    private static readonly HashSet<string> ExcludedDirectories = new(
-        ["bin", "obj", "node_modules", ".git", ".vs", "TestResults", "artifacts"],
-        StringComparer.OrdinalIgnoreCase);
-
     /// <inheritdoc />
     public async Task ScanAsync(ScanContext context, CancellationToken cancellationToken)
     {
@@ -26,7 +22,7 @@ public sealed partial class JsonConfigScanner : IScanner
             throw new DirectoryNotFoundException($"Scan root '{root}' does not exist.");
         }
 
-        foreach (var file in Discover(root))
+        foreach (var file in SourceDirectoryWalker.EnumerateFiles(root))
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -46,28 +42,6 @@ public sealed partial class JsonConfigScanner : IScanner
             foreach (var entry in JsonConfigFileParser.Parse(content, relativePath, environment))
             {
                 context.AddConfigEntry(entry);
-            }
-        }
-    }
-
-    /// <summary>Walks the directory tree, skipping excluded folders.</summary>
-    private static IEnumerable<string> Discover(string directory)
-    {
-        foreach (var file in Directory.EnumerateFiles(directory))
-        {
-            yield return file;
-        }
-
-        foreach (var subdirectory in Directory.EnumerateDirectories(directory))
-        {
-            if (ExcludedDirectories.Contains(Path.GetFileName(subdirectory)))
-            {
-                continue;
-            }
-
-            foreach (var file in Discover(subdirectory))
-            {
-                yield return file;
             }
         }
     }
