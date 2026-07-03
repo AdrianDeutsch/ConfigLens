@@ -5,6 +5,9 @@
 *.bat text eol=crlf
 *.cmd text eol=crlf
 
+# Verify snapshot files must never be normalized or merged line-by-line
+*.verified.* text eol=lf working-tree-encoding=UTF-8
+
 # Binary files
 *.png binary
 *.gif binary

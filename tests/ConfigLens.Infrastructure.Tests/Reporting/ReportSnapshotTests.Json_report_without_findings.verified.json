@@ -1,0 +1,22 @@
+﻿{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ConfigLens",
+    "version": "1.2.3-test"
+  },
+  "scan": {
+    "root": "src/CleanApp",
+    "environments": []
+  },
+  "score": {
+    "value": 100,
+    "totalPenalty": 0
+  },
+  "summary": {
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "suppressed": 0
+  },
+  "findings": []
+}

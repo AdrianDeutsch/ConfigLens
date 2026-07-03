@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ConfigLens Report</title>
+<style>
+body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; margin: 2rem auto; max-width: 70rem; color: #1f2328; }
+h1 { font-size: 1.5rem; }
+.meta { color: #59636e; font-size: .9rem; }
+.score { display: inline-block; padding: .4rem 1rem; border-radius: .5rem; color: #fff; font-size: 1.4rem; font-weight: 700; }
+.score.good { background: #1a7f37; }
+.score.medium { background: #9a6700; }
+.score.bad { background: #cf222e; }
+table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+th, td { border: 1px solid #d1d9e0; padding: .4rem .6rem; text-align: left; font-size: .9rem; vertical-align: top; }
+th { background: #f6f8fa; }
+.sev-error { color: #cf222e; font-weight: 600; }
+.sev-warning { color: #9a6700; font-weight: 600; }
+.sev-info { color: #59636e; }
+code { background: #f6f8fa; padding: .1rem .3rem; border-radius: .3rem; }
+.fix { color: #59636e; }
+</style>
+</head>
+<body>
+<h1>ConfigLens Report</h1>
+<p class="meta">Scanned <code>src/DemoApp</code> &middot; environments: Development, Production &middot; ConfigLens 1.2.3-test</p>
+<p><span class="score medium">Score 86/100</span></p>
+<p>1 errors &middot; 1 warnings &middot; 1 infos &middot; 2 suppressed by baseline</p>
+<table>
+<thead><tr><th>Rule</th><th>Severity</th><th>Confidence</th><th>Location</th><th>Message</th></tr></thead>
+<tbody>
+<tr>
+<td>CL001</td>
+<td class="sev-error">Error</td>
+<td>High</td>
+<td><code>Program.cs:12</code></td>
+<td>Configuration key &#39;Database:Host&#39; is read in code but missing for environment(s) &#39;Production&#39;.<br><span class="fix">Add &#39;Database:Host&#39; to the affected configuration files, or remove the read.</span></td>
+</tr>
+<tr>
+<td>CL002</td>
+<td class="sev-warning">Warning</td>
+<td>High</td>
+<td><code>appsettings.Development.json:3</code></td>
+<td>Configuration key &#39;Features:Beta&#39; is defined for environment &#39;Development&#39; but missing for environment &#39;Production&#39;.<br><span class="fix">Add &#39;Features:Beta&#39; to appsettings.Production.json, or move it to the base appsettings.json if it applies to all environments.</span></td>
+</tr>
+<tr>
+<td>CL003</td>
+<td class="sev-info">Info</td>
+<td>Medium</td>
+<td><code>appsettings.json:8</code></td>
+<td>Configuration key &#39;Legacy:Mode&#39; is never read by the scanned code.<br><span class="fix">Remove &#39;Legacy:Mode&#39; from the configuration, or wire it up in code.</span></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

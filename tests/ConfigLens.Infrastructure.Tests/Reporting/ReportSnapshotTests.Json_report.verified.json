@@ -1,0 +1,56 @@
+﻿{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ConfigLens",
+    "version": "1.2.3-test"
+  },
+  "scan": {
+    "root": "src/DemoApp",
+    "environments": [
+      "Development",
+      "Production"
+    ]
+  },
+  "score": {
+    "value": 86,
+    "totalPenalty": 13.6
+  },
+  "summary": {
+    "errors": 1,
+    "warnings": 1,
+    "infos": 1,
+    "suppressed": 2
+  },
+  "findings": [
+    {
+      "ruleId": "CL001",
+      "severity": "error",
+      "confidence": "high",
+      "message": "Configuration key 'Database:Host' is read in code but missing for environment(s) 'Production'.",
+      "file": "Program.cs",
+      "line": 12,
+      "suggestedFix": "Add 'Database:Host' to the affected configuration files, or remove the read.",
+      "fingerprint": "41eedd08cba4a54e"
+    },
+    {
+      "ruleId": "CL002",
+      "severity": "warning",
+      "confidence": "high",
+      "message": "Configuration key 'Features:Beta' is defined for environment 'Development' but missing for environment 'Production'.",
+      "file": "appsettings.Development.json",
+      "line": 3,
+      "suggestedFix": "Add 'Features:Beta' to appsettings.Production.json, or move it to the base appsettings.json if it applies to all environments.",
+      "fingerprint": "785d1fe9c64d9a90"
+    },
+    {
+      "ruleId": "CL003",
+      "severity": "info",
+      "confidence": "medium",
+      "message": "Configuration key 'Legacy:Mode' is never read by the scanned code.",
+      "file": "appsettings.json",
+      "line": 8,
+      "suggestedFix": "Remove 'Legacy:Mode' from the configuration, or wire it up in code.",
+      "fingerprint": "d916b63f66cc8b28"
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+﻿{
+  "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "ConfigLens",
+          "informationUri": "https://github.com/AdrianDeutsch/ConfigLens",
+          "version": "1.2.3-test",
+          "rules": [
+            {
+              "id": "CL001",
+              "helpUri": "https://github.com/AdrianDeutsch/ConfigLens/blob/main/docs/rules/CL001.md"
+            },
+            {
+              "id": "CL002",
+              "helpUri": "https://github.com/AdrianDeutsch/ConfigLens/blob/main/docs/rules/CL002.md"
+            },
+            {
+              "id": "CL003",
+              "helpUri": "https://github.com/AdrianDeutsch/ConfigLens/blob/main/docs/rules/CL003.md"
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "CL001",
+          "level": "error",
+          "message": {
+            "text": "Configuration key 'Database:Host' is read in code but missing for environment(s) 'Production'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Program.cs"
+                },
+                "region": {
+                  "startLine": 12
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "configLens/v1": "41eedd08cba4a54e"
+          },
+          "properties": {
+            "confidence": "High"
+          }
+        },
+        {
+          "ruleId": "CL002",
+          "level": "warning",
+          "message": {
+            "text": "Configuration key 'Features:Beta' is defined for environment 'Development' but missing for environment 'Production'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "appsettings.Development.json"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "configLens/v1": "785d1fe9c64d9a90"
+          },
+          "properties": {
+            "confidence": "High"
+          }
+        },
+        {
+          "ruleId": "CL003",
+          "level": "note",
+          "message": {
+            "text": "Configuration key 'Legacy:Mode' is never read by the scanned code."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "appsettings.json"
+                },
+                "region": {
+                  "startLine": 8
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "configLens/v1": "d916b63f66cc8b28"
+          },
+          "properties": {
+            "confidence": "Medium"
+          }
+        }
+      ]
+    }
+  ]
+}
