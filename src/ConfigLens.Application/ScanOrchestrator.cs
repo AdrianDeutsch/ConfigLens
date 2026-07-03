@@ -1,4 +1,5 @@
 using ConfigLens.Application.Ports;
+using ConfigLens.Application.Scoring;
 using ConfigLens.Domain;
 
 namespace ConfigLens.Application;
@@ -49,6 +50,6 @@ public sealed class ScanOrchestrator
             .ThenBy(finding => finding.Message, StringComparer.Ordinal)
             .ToArray();
 
-        return new ScanResult(config, usage, findings);
+        return new ScanResult(config, usage, findings, ScoreCalculator.Calculate(findings));
     }
 }
