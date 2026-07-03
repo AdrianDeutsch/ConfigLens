@@ -16,32 +16,35 @@ public static class ScoreCalculator
     {
         ArgumentNullException.ThrowIfNull(findings);
 
+        // Decimal keeps the sum exact: with floating point, the order of
+        // findings could flip the rounding at .5 midpoints and break the
+        // order-independence invariant of ADR-0005.
         var totalPenalty = findings.Sum(PenaltyOf);
-        var value = (int)Math.Round(Math.Max(0, 100 - totalPenalty), MidpointRounding.AwayFromZero);
+        var value = (int)Math.Round(Math.Max(0m, 100m - totalPenalty), MidpointRounding.AwayFromZero);
         return new HealthScore(value, totalPenalty);
     }
 
     /// <summary>The weighted penalty a single finding subtracts from the score.</summary>
     /// <param name="finding">The finding to weigh.</param>
-    public static double PenaltyOf(Finding finding)
+    public static decimal PenaltyOf(Finding finding)
     {
         ArgumentNullException.ThrowIfNull(finding);
         return BasePenalty(finding.Severity) * ConfidenceFactor(finding.Confidence);
     }
 
-    private static double BasePenalty(Severity severity) => severity switch
+    private static decimal BasePenalty(Severity severity) => severity switch
     {
-        Severity.Error => 10,
-        Severity.Warning => 3,
-        Severity.Info => 1,
-        _ => 0,
+        Severity.Error => 10m,
+        Severity.Warning => 3m,
+        Severity.Info => 1m,
+        _ => 0m,
     };
 
-    private static double ConfidenceFactor(Confidence confidence) => confidence switch
+    private static decimal ConfidenceFactor(Confidence confidence) => confidence switch
     {
-        Confidence.High => 1.0,
-        Confidence.Medium => 0.6,
-        Confidence.Low => 0.3,
-        _ => 0,
+        Confidence.High => 1.0m,
+        Confidence.Medium => 0.6m,
+        Confidence.Low => 0.3m,
+        _ => 0m,
     };
 }

@@ -6,7 +6,7 @@ namespace ConfigLens.Domain;
 /// </summary>
 /// <param name="Value">Score between 0 and 100.</param>
 /// <param name="TotalPenalty">Unfloored sum of all penalties, for reporting.</param>
-public sealed record HealthScore(int Value, double TotalPenalty)
+public sealed record HealthScore(int Value, decimal TotalPenalty)
 {
     /// <summary>Score of a scan without findings.</summary>
     public static readonly HealthScore Perfect = new(100, 0);

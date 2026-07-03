@@ -31,7 +31,7 @@ public class ScoreCalculatorTests
     [InlineData(Severity.Info, Confidence.Low, 0.3)]
     public void Penalty_is_severity_weight_scaled_by_confidence(Severity severity, Confidence confidence, double expected)
     {
-        ScoreCalculator.PenaltyOf(Make(severity, confidence)).ShouldBe(expected, tolerance: 1e-9);
+        ScoreCalculator.PenaltyOf(Make(severity, confidence)).ShouldBe((decimal)expected);
     }
 
     [Fact]
@@ -58,5 +58,20 @@ public class ScoreCalculatorTests
 
         score.Value.ShouldBe(0);
         score.TotalPenalty.ShouldBe(250);
+    }
+
+    [Fact]
+    public void Rounding_at_midpoints_is_order_independent()
+    {
+        // 14 findings summing to exactly 14.5 penalty: with floating point,
+        // reversing the order flipped the rounding at the .5 midpoint —
+        // caught by FsCheck on Windows, fixed by exact decimal arithmetic.
+        var findings = Enumerable.Repeat(Make(Severity.Error, Confidence.High), 1)
+            .Concat(Enumerable.Repeat(Make(Severity.Warning, Confidence.Low), 5))
+            .ToArray();
+
+        ScoreCalculator.Calculate(findings).TotalPenalty.ShouldBe(14.5m);
+        ScoreCalculator.Calculate(findings).Value
+            .ShouldBe(ScoreCalculator.Calculate(findings.Reverse().ToArray()).Value);
     }
 }
