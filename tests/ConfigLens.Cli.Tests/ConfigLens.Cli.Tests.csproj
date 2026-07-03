@@ -4,4 +4,10 @@
     <ProjectReference Include="../../src/ConfigLens.Cli/ConfigLens.Cli.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Shared fixture helpers, linked to avoid a test-utility project. -->
+    <Compile Include="../ConfigLens.Infrastructure.Tests/FixturePaths.cs" Link="FixturePaths.cs" />
+    <Compile Include="../ConfigLens.Infrastructure.Tests/FixtureRestore.cs" Link="FixtureRestore.cs" />
+  </ItemGroup>
+
 </Project>

@@ -4,15 +4,29 @@ using Xunit;
 
 namespace ConfigLens.Cli.Tests;
 
-/// <summary>
-/// End-to-end CLI tests run the published tool as a process from M4 on.
-/// Until then this exercises the stub entry point in-process.
-/// </summary>
 public class ProgramTests
 {
     [Fact]
-    public void Main_returns_success_exit_code()
+    public async Task Help_exits_with_code_0()
     {
-        Program.Main([]).ShouldBe(0);
+        (await Program.Main(["--help"])).ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Unknown_option_is_a_tool_error()
+    {
+        (await Program.Main(["scan", "--bogus"])).ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Invalid_format_value_is_a_tool_error()
+    {
+        (await Program.Main(["scan", ".", "--format", "yaml"])).ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Invalid_fail_on_value_is_a_tool_error()
+    {
+        (await Program.Main(["scan", ".", "--fail-on", "sometimes"])).ShouldBe(2);
     }
 }

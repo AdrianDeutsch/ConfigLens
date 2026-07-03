@@ -27,13 +27,29 @@ dotnet tool install -g configlens
 configlens scan .
 ```
 
+## CLI
+
+```bash
+configlens scan <path>
+  --environments Development,Staging,Production  # drift scope (default: discovered)
+  --format console|json|html|sarif               # multiple allowed (default: console)
+  --output <dir>                                 # where file reports go
+  --fail-on error|warning|none                   # CI gate (default: error)
+  --baseline <file>                              # suppress known findings
+  --write-baseline                               # record current findings as the baseline
+```
+
+Exit codes are a stable contract: `0` clean, `1` findings at/above the `--fail-on` threshold, `2` tool error (including invalid arguments).
+
+**Adopting on a legacy codebase:** run `configlens scan . --baseline .configlens-baseline.json --write-baseline` once and commit the file — from then on only *new* findings fail the build.
+
 ## Roadmap
 
 - [x] **M0** — Solution skeleton, Clean Architecture layout, CI on Linux + Windows
 - [x] **M1** — JSON config scanner, environment drift (CL002), secrets detection (CL004)
 - [x] **M2** — Roslyn usage scanner with confidence levels (CL900)
 - [x] **M3** — Cross-referencing rules (CL001/003/005/006/007), Config Health Score, baselines
-- [ ] **M4** — CLI polish, JSON/HTML/SARIF renderers
+- [x] **M4** — CLI polish, JSON/HTML/SARIF renderers
 - [ ] **M5** — GitHub Action, NuGet release v0.1
 
 Out of scope for v0.1: Azure Key Vault / AWS provider resolution, YAML/INI providers, Blazor WASM, MSBuild-time source generators, auto-fix.

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `configlens scan` CLI (M4): `--environments`, `--format console|json|html|sarif` (multiple allowed), `--output`, `--fail-on error|warning|none`, `--baseline` and `--write-baseline`; stable exit codes (0 clean, 1 findings at/above threshold, 2 tool error).
+- Report renderers behind one port: rich Spectre console output with per-rule breakdown and score panel, versioned JSON schema, self-contained HTML, SARIF 2.1.0 for the GitHub Security tab (ADR-0004); all file formats pinned by Verify snapshot tests.
 - Cross-referencing rules (M3): `CL001` missing key, `CL003` dead configuration, `CL005` type mismatch against options properties, `CL006` unbound options class, `CL007` typo suspicion via edit distance.
 - Config Health Score: 100 minus severity-weighted, confidence-scaled penalties, floored at 0 (ADR-0005); invariants pinned with property-based tests.
 - Baseline support: fingerprint-based suppression of known findings for painless legacy adoption (ADR-0006).
