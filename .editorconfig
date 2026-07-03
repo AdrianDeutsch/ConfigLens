@@ -32,7 +32,7 @@ csharp_style_prefer_pattern_matching = true:suggestion
 csharp_style_prefer_switch_expression = true:suggestion
 
 # Modifier preferences
-dotnet_style_require_accessibility_modifiers = always:error
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:error
 csharp_prefer_static_local_function = true:warning
 
 # Naming: interfaces start with I

@@ -8,8 +8,9 @@
     <OutputType>Exe</OutputType>
     <!-- CA1707: test method names use underscores by convention.
          CS1591: XML docs are not required on test classes.
-         CA1515: xUnit test classes must stay public. -->
-    <NoWarn>$(NoWarn);CA1707;CS1591;CA1515</NoWarn>
+         CA1515: xUnit test classes must stay public.
+         CA2007: ConfigureAwait adds no value in test methods. -->
+    <NoWarn>$(NoWarn);CA1707;CS1591;CA1515;CA2007</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
