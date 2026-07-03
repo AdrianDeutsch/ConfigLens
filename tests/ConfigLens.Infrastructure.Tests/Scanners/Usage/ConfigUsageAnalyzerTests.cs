@@ -225,6 +225,51 @@ public class ConfigUsageAnalyzerTests
     }
 
     [Fact]
+    public void GetConnectionString_maps_to_the_connection_strings_section()
+    {
+        var result = Analyze("""_ = config.GetConnectionString("Default");""");
+
+        var usage = result.Usages.ShouldHaveSingleItem();
+        usage.Key.Path.ShouldBe("ConnectionStrings:Default");
+        usage.Kind.ShouldBe(KeyUsageKind.GetValue);
+        usage.Confidence.ShouldBe(Confidence.High);
+    }
+
+    [Fact]
+    public void Options_bindings_capture_the_bindable_properties()
+    {
+        var result = Analyze(
+            """services.Configure<MyOptions>(config.GetSection("My"));""",
+            """
+            public enum LogMode { Quiet, Verbose }
+
+            public class OptionsBase { public string? Inherited { get; set; } }
+
+            public sealed class MyOptions : OptionsBase
+            {
+                public int Port { get; set; }
+                public int? Retries { get; set; }
+                public LogMode Mode { get; set; }
+                public string ReadOnly { get; } = "";
+                public static string Static { get; set; } = "";
+                internal string Hidden { get; set; } = "";
+            }
+            """);
+
+        var binding = result.Usages.Single(u => u.Kind == KeyUsageKind.OptionsBinding);
+        var properties = binding.BoundProperties.ShouldNotBeNull();
+
+        properties.Select(p => (p.Name, p.TypeName)).ShouldBe(
+        [
+            ("Port", "System.Int32"),
+            ("Retries", "System.Int32"),
+            ("Mode", "LogMode"),
+            ("Inherited", "System.String"),
+        ], ignoreOrder: true);
+        properties.Single(p => p.Name == "Mode").EnumMemberNames.ShouldBe(["Quiet", "Verbose"]);
+    }
+
+    [Fact]
     public void Unrelated_methods_with_matching_names_are_ignored()
     {
         var result = Analyze(

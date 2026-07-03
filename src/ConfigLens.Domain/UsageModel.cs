@@ -12,15 +12,24 @@ public sealed class UsageModel
 
     /// <summary>Creates the model from the scanned usages.</summary>
     /// <param name="usages">All key usages across all scanned projects.</param>
-    public UsageModel(IReadOnlyList<KeyUsage> usages)
+    /// <param name="hasUnresolvedAccesses">Whether the scan hit key accesses it could not resolve (CL900).</param>
+    public UsageModel(IReadOnlyList<KeyUsage> usages, bool hasUnresolvedAccesses = false)
     {
         ArgumentNullException.ThrowIfNull(usages);
         Usages = usages;
+        HasUnresolvedAccesses = hasUnresolvedAccesses;
         _usedKeys = [.. usages.Select(usage => usage.Key)];
     }
 
     /// <summary>All key usages across all scanned projects.</summary>
     public IReadOnlyList<KeyUsage> Usages { get; }
+
+    /// <summary>
+    /// Whether the scan hit key accesses it could not resolve. When true,
+    /// absence of a usage is weak evidence — dead-config findings degrade
+    /// accordingly (ADR-0002).
+    /// </summary>
+    public bool HasUnresolvedAccesses { get; }
 
     /// <summary>Whether any usage reads exactly this key.</summary>
     /// <param name="key">The key to look up (case-insensitive).</param>

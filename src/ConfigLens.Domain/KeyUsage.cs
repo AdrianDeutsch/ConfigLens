@@ -14,9 +14,11 @@ namespace ConfigLens.Domain;
 /// </param>
 /// <param name="Location">File and line of the access.</param>
 /// <param name="BoundTypeName">Fully-qualified options type for <see cref="KeyUsageKind.OptionsBinding"/> usages.</param>
+/// <param name="BoundProperties">Bindable properties of the options type for <see cref="KeyUsageKind.OptionsBinding"/> usages.</param>
 public sealed record KeyUsage(
     ConfigKey Key,
     KeyUsageKind Kind,
     Confidence Confidence,
     SourceLocation Location,
-    string? BoundTypeName = null);
+    string? BoundTypeName = null,
+    IReadOnlyList<BoundProperty>? BoundProperties = null);

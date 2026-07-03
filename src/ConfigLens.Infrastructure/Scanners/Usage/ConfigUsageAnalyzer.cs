@@ -121,12 +121,16 @@ public static class ConfigUsageAnalyzer
                 AnalyzeKeyedRead(semanticModel, invocation, method, KeyUsageKind.GetValue, usages, findings, cancellationToken);
                 break;
 
+            case "GetConnectionString" when IsInNamespace(method, ConfigurationNamespace):
+                AnalyzeKeyedRead(semanticModel, invocation, method, KeyUsageKind.GetValue, usages, findings, cancellationToken, "ConnectionStrings", parameterName: "name");
+                break;
+
             case "Bind" when IsInNamespace(method, ConfigurationNamespace):
                 AnalyzeBinding(semanticModel, invocation, BoundTypeFromInstanceArgument(semanticModel, invocation, cancellationToken), usages, findings, cancellationToken);
                 break;
 
             case "Get" when IsInNamespace(method, ConfigurationNamespace) && method.TypeArguments.Length == 1:
-                AnalyzeBinding(semanticModel, invocation, method.TypeArguments[0].ToDisplayString(), usages, findings, cancellationToken);
+                AnalyzeBinding(semanticModel, invocation, method.TypeArguments[0], usages, findings, cancellationToken);
                 break;
 
             case "Configure" when IsInNamespace(method, DependencyInjectionNamespace) && method.TypeArguments.Length == 1:
@@ -138,7 +142,7 @@ public static class ConfigUsageAnalyzer
         }
     }
 
-    /// <summary>Handles <c>GetSection("…")</c> and <c>GetValue&lt;T&gt;("…")</c> including section chains.</summary>
+    /// <summary>Handles <c>GetSection("…")</c>, <c>GetValue&lt;T&gt;("…")</c> and <c>GetConnectionString("…")</c> including section chains.</summary>
     private static void AnalyzeKeyedRead(
         SemanticModel semanticModel,
         InvocationExpressionSyntax invocation,
@@ -146,7 +150,9 @@ public static class ConfigUsageAnalyzer
         KeyUsageKind kind,
         List<KeyUsage> usages,
         List<Finding> findings,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string? impliedSection = null,
+        string parameterName = "key")
     {
         var receiver = ReceiverOf(invocation);
         var prefix = receiver is null
@@ -162,7 +168,7 @@ public static class ConfigUsageAnalyzer
             return;
         }
 
-        var keyArgument = FindArgument(invocation, method, "key");
+        var keyArgument = FindArgument(invocation, method, parameterName);
         if (keyArgument is null)
         {
             return;
@@ -175,8 +181,9 @@ public static class ConfigUsageAnalyzer
             return;
         }
 
+        var fullKey = impliedSection is null ? key.Value.Value : $"{impliedSection}{ConfigKey.Separator}{key.Value.Value}";
         usages.Add(new KeyUsage(
-            Combine(prefix.Segments, key.Value.Value),
+            Combine(prefix.Segments, fullKey),
             kind,
             Min(prefix.Confidence, key.Value.Confidence),
             LocationOf(invocation)));
@@ -186,7 +193,7 @@ public static class ConfigUsageAnalyzer
     private static void AnalyzeBinding(
         SemanticModel semanticModel,
         InvocationExpressionSyntax invocation,
-        string? boundTypeName,
+        ITypeSymbol? boundType,
         List<KeyUsage> usages,
         List<Finding> findings,
         CancellationToken cancellationToken)
@@ -213,7 +220,8 @@ public static class ConfigUsageAnalyzer
             KeyUsageKind.OptionsBinding,
             section.Confidence,
             LocationOf(invocation),
-            boundTypeName));
+            boundType?.ToDisplayString(),
+            ExtractBindableProperties(boundType)));
     }
 
     /// <summary>Handles <c>services.Configure&lt;TOptions&gt;(configuration.GetSection("…"))</c>.</summary>
@@ -251,7 +259,8 @@ public static class ConfigUsageAnalyzer
             KeyUsageKind.OptionsBinding,
             section.Confidence,
             LocationOf(invocation),
-            method.TypeArguments[0].ToDisplayString()));
+            method.TypeArguments[0].ToDisplayString(),
+            ExtractBindableProperties(method.TypeArguments[0])));
     }
 
     /// <summary>
@@ -356,15 +365,65 @@ public static class ConfigUsageAnalyzer
         return null;
     }
 
-    private static string? BoundTypeFromInstanceArgument(SemanticModel semanticModel, InvocationExpressionSyntax invocation, CancellationToken cancellationToken)
+    private static ITypeSymbol? BoundTypeFromInstanceArgument(SemanticModel semanticModel, InvocationExpressionSyntax invocation, CancellationToken cancellationToken)
     {
         var instance = invocation.ArgumentList.Arguments.Count == 1
             ? invocation.ArgumentList.Arguments[0].Expression
             : null;
-        return instance is null
-            ? null
-            : semanticModel.GetTypeInfo(instance, cancellationToken).Type?.ToDisplayString();
+        return instance is null ? null : semanticModel.GetTypeInfo(instance, cancellationToken).Type;
     }
+
+    /// <summary>
+    /// Captures the publicly settable instance properties of an options type
+    /// (including inherited ones) as plain data for the type-mismatch rule.
+    /// Nullable value types are unwrapped; enum member names are recorded so
+    /// values can be validated without symbol access.
+    /// </summary>
+    private static List<BoundProperty>? ExtractBindableProperties(ITypeSymbol? type)
+    {
+        if (type is not INamedTypeSymbol)
+        {
+            return null;
+        }
+
+        var properties = new List<BoundProperty>();
+        for (var current = type; current is not null && current.SpecialType != SpecialType.System_Object; current = current.BaseType)
+        {
+            foreach (var property in current.GetMembers().OfType<IPropertySymbol>())
+            {
+                if (property.IsStatic
+                    || property.DeclaredAccessibility != Accessibility.Public
+                    || property.SetMethod is not { DeclaredAccessibility: Accessibility.Public })
+                {
+                    continue;
+                }
+
+                var propertyType = property.Type;
+                if (propertyType is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullable)
+                {
+                    propertyType = nullable.TypeArguments[0];
+                }
+
+                var enumMembers = propertyType.TypeKind == TypeKind.Enum
+                    ? propertyType.GetMembers().OfType<IFieldSymbol>()
+                        .Where(member => member.HasConstantValue)
+                        .Select(member => member.Name)
+                        .ToArray()
+                    : null;
+
+                properties.Add(new BoundProperty(
+                    property.Name,
+                    propertyType.ToDisplayString(TypeNameFormat),
+                    enumMembers));
+            }
+        }
+
+        return properties;
+    }
+
+    /// <summary>Stable type identifiers like <c>System.Int32</c> instead of keyword forms like <c>int</c>.</summary>
+    private static readonly SymbolDisplayFormat TypeNameFormat =
+        new(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
     private static bool IsConfigurationType(ITypeSymbol? type)
         => type is not null && (IsConfigurationInterface(type) || type.AllInterfaces.Any(IsConfigurationInterface));

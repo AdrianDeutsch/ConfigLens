@@ -32,6 +32,11 @@ public static class TestCompilation
                 public static T? Get<T>(this IConfiguration configuration) => default;
                 public static void Bind(this IConfiguration configuration, object instance) { }
             }
+
+            public static class ConfigurationExtensions
+            {
+                public static string? GetConnectionString(this IConfiguration configuration, string name) => default;
+            }
         }
 
         namespace Microsoft.Extensions.DependencyInjection

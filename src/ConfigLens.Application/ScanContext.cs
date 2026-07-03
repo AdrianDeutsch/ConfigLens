@@ -54,5 +54,6 @@ public sealed class ScanContext
     public ConfigModel BuildConfigModel() => new(_configEntries);
 
     /// <summary>Builds the immutable usage model from the collected key usages.</summary>
-    public UsageModel BuildUsageModel() => new(_keyUsages);
+    public UsageModel BuildUsageModel()
+        => new(_keyUsages, _findings.Any(finding => finding.RuleId == RuleIds.UnresolvableKeyAccess));
 }
