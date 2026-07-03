@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>ConfigLens domain model: findings, rules, severities, confidence levels.</Description>
+  </PropertyGroup>
+
+</Project>

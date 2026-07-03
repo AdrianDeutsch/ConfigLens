@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ConfigLens.Application/ConfigLens.Application.csproj" />
+    <Project Path="src/ConfigLens.Cli/ConfigLens.Cli.csproj" />
+    <Project Path="src/ConfigLens.Domain/ConfigLens.Domain.csproj" />
+    <Project Path="src/ConfigLens.Infrastructure/ConfigLens.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ConfigLens.Application.Tests/ConfigLens.Application.Tests.csproj" />
+    <Project Path="tests/ConfigLens.Architecture.Tests/ConfigLens.Architecture.Tests.csproj" />
+    <Project Path="tests/ConfigLens.Cli.Tests/ConfigLens.Cli.Tests.csproj" />
+    <Project Path="tests/ConfigLens.Domain.Tests/ConfigLens.Domain.Tests.csproj" />
+    <Project Path="tests/ConfigLens.Infrastructure.Tests/ConfigLens.Infrastructure.Tests.csproj" />
+  </Folder>
+</Solution>

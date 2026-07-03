@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>ConfigLens application layer: scan orchestration, rule engine, scoring.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../ConfigLens.Domain/ConfigLens.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

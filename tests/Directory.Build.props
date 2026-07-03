@@ -1,0 +1,23 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <!-- xUnit v3 test projects are executables -->
+    <OutputType>Exe</OutputType>
+    <!-- CA1707: test method names use underscores by convention.
+         CS1591: XML docs are not required on test classes.
+         CA1515: xUnit test classes must stay public. -->
+    <NoWarn>$(NoWarn);CA1707;CS1591;CA1515</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+    <PackageReference Include="coverlet.collector" PrivateAssets="all" />
+    <PackageReference Include="Shouldly" />
+  </ItemGroup>
+
+</Project>

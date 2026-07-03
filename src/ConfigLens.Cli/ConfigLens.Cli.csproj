@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>configlens</AssemblyName>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>configlens</ToolCommandName>
+    <PackageId>configlens</PackageId>
+    <Description>ConfigLens cross-references your configuration files with the code that actually reads them — and finds the config bugs that only show up in production.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../ConfigLens.Application/ConfigLens.Application.csproj" />
+    <ProjectReference Include="../ConfigLens.Infrastructure/ConfigLens.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="ConfigLens.Cli.Tests" />
+  </ItemGroup>
+
+</Project>

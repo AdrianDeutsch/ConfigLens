@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/ConfigLens.Infrastructure/ConfigLens.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
