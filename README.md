@@ -32,7 +32,7 @@ configlens scan .
 - [x] **M0** — Solution skeleton, Clean Architecture layout, CI on Linux + Windows
 - [x] **M1** — JSON config scanner, environment drift (CL002), secrets detection (CL004)
 - [x] **M2** — Roslyn usage scanner with confidence levels (CL900)
-- [ ] **M3** — Cross-referencing rules (CL001/003/005/006/007), Config Health Score, baselines
+- [x] **M3** — Cross-referencing rules (CL001/003/005/006/007), Config Health Score, baselines
 - [ ] **M4** — CLI polish, JSON/HTML/SARIF renderers
 - [ ] **M5** — GitHub Action, NuGet release v0.1
 
