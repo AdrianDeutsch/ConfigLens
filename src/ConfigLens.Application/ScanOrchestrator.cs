@@ -37,7 +37,8 @@ public sealed class ScanOrchestrator
         }
 
         var config = context.BuildConfigModel();
-        var ruleContext = new RuleContext(config, request);
+        var usage = context.BuildUsageModel();
+        var ruleContext = new RuleContext(config, usage, request);
 
         // Deterministic ordering makes console output, snapshots and baselines stable.
         var findings = context.Findings
@@ -48,6 +49,6 @@ public sealed class ScanOrchestrator
             .ThenBy(finding => finding.Message, StringComparer.Ordinal)
             .ToArray();
 
-        return new ScanResult(config, findings);
+        return new ScanResult(config, usage, findings);
     }
 }

@@ -11,4 +11,7 @@ public static class RuleIds
 
     /// <summary>CL004 — hardcoded secret detected in configuration.</summary>
     public const string HardcodedSecret = "CL004";
+
+    /// <summary>CL900 — key access that static analysis cannot resolve (informational, ADR-0002).</summary>
+    public const string UnresolvableKeyAccess = "CL900";
 }

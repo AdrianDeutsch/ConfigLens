@@ -17,7 +17,7 @@ public class HardcodedSecretRuleTests
             value,
             ConfigModel.BaseEnvironment,
             new SourceLocation("appsettings.json", 7));
-        return new RuleContext(new ConfigModel([entry]), new ScanRequest("."));
+        return new RuleContext(new ConfigModel([entry]), UsageModel.Empty, new ScanRequest("."));
     }
 
     private Finding SingleFinding(string key, string value)

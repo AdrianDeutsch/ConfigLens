@@ -14,7 +14,7 @@ public class EnvironmentDriftRuleTests
         => new(ConfigKey.Parse(key), "value", environment, new SourceLocation(file, line));
 
     private static RuleContext Context(IReadOnlyList<ConfigEntry> entries, params string[] requestedEnvironments)
-        => new(new ConfigModel(entries), new ScanRequest(".", requestedEnvironments));
+        => new(new ConfigModel(entries), UsageModel.Empty, new ScanRequest(".", requestedEnvironments));
 
     [Fact]
     public void Key_missing_in_one_environment_is_reported()

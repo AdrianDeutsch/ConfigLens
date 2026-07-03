@@ -9,6 +9,7 @@ namespace ConfigLens.Application;
 public sealed class ScanContext
 {
     private readonly List<ConfigEntry> _configEntries = [];
+    private readonly List<KeyUsage> _keyUsages = [];
     private readonly List<Finding> _findings = [];
 
     /// <summary>Creates a context for one scan run.</summary>
@@ -33,6 +34,14 @@ public sealed class ScanContext
         _configEntries.Add(entry);
     }
 
+    /// <summary>Adds a resolved configuration read discovered by a scanner.</summary>
+    /// <param name="usage">The discovered usage.</param>
+    public void AddKeyUsage(KeyUsage usage)
+    {
+        ArgumentNullException.ThrowIfNull(usage);
+        _keyUsages.Add(usage);
+    }
+
     /// <summary>Adds a finding reported directly by a scanner.</summary>
     /// <param name="finding">The finding.</param>
     public void AddFinding(Finding finding)
@@ -43,4 +52,7 @@ public sealed class ScanContext
 
     /// <summary>Builds the immutable config model from the collected entries.</summary>
     public ConfigModel BuildConfigModel() => new(_configEntries);
+
+    /// <summary>Builds the immutable usage model from the collected key usages.</summary>
+    public UsageModel BuildUsageModel() => new(_keyUsages);
 }
